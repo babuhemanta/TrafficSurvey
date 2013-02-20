@@ -1,0 +1,78 @@
+<merge xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".EmployeeActivity" >
+
+	<ScrollView
+	        android:id="@+id/login_form"
+	        android:layout_width="match_parent"
+	        android:layout_height="match_parent" >
+	
+	        <LinearLayout
+	            style="@style/LoginFormContainer"
+	            android:background="#ff33b5e5"
+	            android:orientation="vertical" >
+			<TextView
+	            android:id="@+id/textView1"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="15dp"
+	            android:text="@string/Employee_Name"
+	            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	        <EditText
+	            android:id="@+id/editText1"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"	            
+	            android:layout_marginLeft="15dp"
+	            android:layout_marginRight="30dp"
+	            android:background="#FFFFFF"
+	            android:ems="10"
+	            android:hint="@string/Employee_Name" />
+	        <TextView
+	            android:id="@+id/textView2"
+	            android:layout_width="wrap_content"
+	            android:layout_height="wrap_content"
+	            
+	            android:layout_marginLeft="15dp"
+	            android:text="@string/Employee_Location"
+	            android:textAppearance="?android:attr/textAppearanceMedium" />
+
+	        <EditText
+	            android:id="@+id/editText2"
+	            android:layout_width="match_parent"
+	            android:layout_height="wrap_content"
+	            android:layout_marginLeft="15dp"
+	            android:layout_marginRight="30dp"
+	            android:background="#FFFFFF"
+	            android:ems="10"
+	            android:hint="@string/Employee_Location" />
+			<Spinner
+		        android:id="@+id/spinner1"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginLeft="15dp"
+		        android:layout_marginRight="30dp"
+		        android:entries="@array/Trip" />
+		
+		    <Spinner
+		        android:id="@+id/spinner2"
+		        android:layout_width="match_parent"
+		        android:layout_height="wrap_content"
+		        android:layout_marginLeft="15dp"
+		        android:layout_marginRight="30dp"
+		        android:entries="@array/typeformat" />
+		
+		    <Button
+		        android:id="@+id/button1"		       
+		        android:layout_width="wrap_content"
+		        android:layout_height="wrap_content"
+		        android:layout_gravity="right"
+		        android:background="#FFFFFF"
+		        android:layout_marginLeft="15dp"
+		        android:text="@string/Next" />
+	        </LinearLayout>
+	    </ScrollView>
+
+</merge>

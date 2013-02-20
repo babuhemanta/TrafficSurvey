@@ -1,0 +1,17 @@
+<menu xmlns:android="http://schemas.android.com/apk/res/android" >
+
+    <item android:id="@+id/menu_viewdb"
+    	 
+          android:title="View Database" />
+    <item android:id="@+id/menu_report"
+    	  
+          android:title="Report Generate" />
+    <item android:id="@+id/menu_reset"
+    	 
+          android:title="Reset Database" />
+    <item android:id="@+id/menu_exit"
+   
+          android:title="Exit" />
+    
+
+</menu>

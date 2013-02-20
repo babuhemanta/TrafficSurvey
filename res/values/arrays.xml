@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string-array name="vehicle">
+        <item >Cycle</item>
+        <item >Two Wheeler</item>
+        <item >Cycle Rikshaw</item>
+        <item >Hourse Cart</item>
+        <item >Bull cart</item>
+        <item >3- Wheller auto</item>
+        <item >LCV(3-weeler)</item>
+        <item >Car, Jeep, Taxi</item>
+        <item >4-Wheeler share auto</item>
+        <item >LCV(4-wheeler)</item>
+        <item >Govt Car</item>
+        <item >Mini bus</item>
+        <item >Full buss</item>
+        <item >Tractor</item>
+        <item >Two Axles  truck</item>
+        <item >Tactor + trailler</item>
+        <item >3-Axiles truck</item>
+        <item >4-6 Axiles trick</item>
+        <item >7-more axiles truck</item>
+        <item >JCB</item>
+        <item >LCV(6-wheeler)</item>
+        <item >Govt truck</item>
+    </string-array>
+</resources>
