@@ -198,12 +198,21 @@ public class TrafficDatabaseHandler {
 				DATABASE_FILE_PATH + File.separator + mContext.getPackageName()
 						+ File.separator + DATABASE_NAME, null);
 		Cursor cursor = null;
+		String data_Dt;
 		String vidd = Integer.toString(vid);
 		int ct = 0;
 		sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 		String currentDateandTime = sdf.format(new Date());
-		String str[] = currentDateandTime.split(" ");
-		String data_Dt = str[0];
+		String str[] = currentDateandTime.split(" ");		
+		
+		String customDate=CustomVehicleActivity.custom_date;
+		if(customDate!=null)
+		{
+			data_Dt=customDate;
+		}else{
+			data_Dt = str[0];
+		}
+		System.out.println("Custom Date is "+customDate);
 		// String time_Tm = str[1];
 		// String countQuery = "SELECT  * FROM " +
 		// VehicleData.TABLE_NAME+"WHERE _date = '2013/2/13' and v_id = 1";
