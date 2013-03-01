@@ -2,6 +2,7 @@ package com.shiftu.trafficsurvey;
 
 import java.util.Calendar;
 import android.os.Bundle;
+import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
@@ -13,7 +14,6 @@ import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.TimePicker;
-import android.widget.Toast;
 
 public class CustomActivity extends Activity {
 
@@ -47,6 +47,7 @@ public class CustomActivity extends Activity {
 		edit2.setGravity(Gravity.CENTER);
 		edit2.setText(new StringBuilder().append(formatDigits(myCalendar.get(Calendar.HOUR_OF_DAY))).append(":").append(formatDigits(myCalendar.get(Calendar.MINUTE))).append(":").append(formatDigits(myCalendar.get(Calendar.SECOND))));
 	}
+	@SuppressLint("UseValueOf")
 	private String formatDigits(long num) {
 		return (num < 10) ? "0" + num : new Long(num).toString();
 		}
@@ -94,7 +95,8 @@ public class CustomActivity extends Activity {
 			setIntent.putExtra("empName", emp_name);
 			setIntent.putExtra("empLocation", emp_location);
 			setIntent.putExtra("empupdown", emp_updown);	
-            startActivity(setIntent);			
+            startActivity(setIntent);		
+          
 		}
 	});
 	updateLabel();

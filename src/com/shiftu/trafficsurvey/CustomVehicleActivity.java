@@ -8,6 +8,7 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.os.SystemClock;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -15,6 +16,8 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
+import android.widget.ToggleButton;
+
 import com.shiftu.trafficsurvey.database.TrafficDatabaseHandler;
 import com.shiftu.trafficsurvey.database.TrafficDatabaseHandler.DATA;
 
@@ -46,10 +49,12 @@ public class CustomVehicleActivity extends Activity implements View.OnClickListe
     private Button mStartButton;
     private Button mStopButton;
     private Button mResetButton;
+    private ToggleButton mToggleButton;
     private Handler mHandler = new Handler();
 	private long mMillisInitial;
 	int Hour, Min, Sec;
 	TrafficDatabaseHandler db;
+	private boolean startEntry=false;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
@@ -194,16 +199,19 @@ public class CustomVehicleActivity extends Activity implements View.OnClickListe
 		 * coding for custom Time Calculation
 		 */
 		 mTimeLabel = (TextView) findViewById(R.id.text23);
+		 mToggleButton = (ToggleButton) findViewById(R.id.toggleButton1);
          mStartButton=(Button)findViewById(R.id.button1);
          mStopButton=(Button) findViewById(R.id.button2);
          mResetButton=(Button) findViewById(R.id.button3);
          mTimeLabel.setText(custom_time);
+         mToggleButton.setOnClickListener(this);
          //mStartTime = System.currentTimeMillis();
          mStartButton.setOnClickListener(new Button.OnClickListener(){
   		   @Override
   		   public void onClick(View v) {
   		    // TODO Auto-generated method stub
   			  mStart();
+  			  startEntry=true;
 	  		  String split_cutomTime[]=custom_time.split(":");
 	          Hour=Integer.parseInt(split_cutomTime[0]);
 	          Min=Integer.parseInt(split_cutomTime[1]);
@@ -215,15 +223,17 @@ public class CustomVehicleActivity extends Activity implements View.OnClickListe
    		   public void onClick(View v) {
    		    // TODO Auto-generated method stub
    		    mPause();
+   		    startEntry=false;
    		   }});
          mResetButton.setOnClickListener(new Button.OnClickListener(){
         	@Override
   		   public void onClick(View v) {
   		    // TODO Auto-generated method stub
   		    mStop();
+  		    startEntry=false;
   		    mTimeLabel.setText(custom_time);
   		   }});
-    		   
+         
 	}
 	private Runnable mUpdateTimeTask = new Runnable() {
         public void run() {             
@@ -251,10 +261,18 @@ public class CustomVehicleActivity extends Activity implements View.OnClickListe
      		   
      		   mTimeLabel.setText(formatDigits(Hour)+":"+formatDigits(Min)+":"+formatDigits(Sec));
      	   }
-     	  
-     	   mHandler.postAtTime(this, (SystemClock.uptimeMillis() + 700));            	  
+     	   if(mToggleButton.isChecked())
+     	   {
+     		  mHandler.postAtTime(this, (SystemClock.uptimeMillis() + 700));  
+     		 
+     	   }else{
+     		  mHandler.postAtTime(this, (SystemClock.uptimeMillis() + 1000)); 
+     		  
+     	   }
+     	               	  
         }
-        private String formatDigits(long num) {
+        @SuppressLint("UseValueOf")
+		private String formatDigits(long num) {
     		return (num < 10) ? "0" + num : new Long(num).toString();
     		}
      };
@@ -265,7 +283,13 @@ public class CustomVehicleActivity extends Activity implements View.OnClickListe
          super.onPause();
          mMillisInitial = SystemClock.uptimeMillis() ;
          mHandler.removeCallbacks(mUpdateTimeTask);
-         mHandler.postDelayed(mUpdateTimeTask, 700);
+         if(mToggleButton.isChecked())
+         {
+        	 mHandler.postDelayed(mUpdateTimeTask, 700);
+         }else{
+        	 mHandler.postDelayed(mUpdateTimeTask, 1000);
+         }
+         
      }
 
      
@@ -291,403 +315,408 @@ public class CustomVehicleActivity extends Activity implements View.OnClickListe
 		
 		System.out.println("Custom Time Stamp "+timestampvalue);
 		System.out.println("custom date  is " + data_Dt);
-		
-		switch (v.getId()) {
+		if(startEntry==false){
+			Toast.makeText(CustomVehicleActivity.this, "Press Start Button", Toast.LENGTH_SHORT).show();
+		}else{
+			switch (v.getId()) {
 
-		case R.id.image1:
-			System.out.println("Image one  Clicked;");
-			System.out.println("1="+userId+" "+data_Dt+" "+time_Tm+" "+userLocation+" "+timestampvalue+" "+emp_updown );
-			ContentValues values = new ContentValues();
-			values.put(DATA.VEHICLE_ID, 1);
-			values.put(DATA.EMPLOYEE_ID, userId);
-			values.put(DATA.DATE, data_Dt);
-			values.put(DATA.TIME, time_Tm);
-			values.put(DATA.LOCATION_ID, userLocation);
-			values.put(DATA.TIMESTAMP,timestampvalue);
-			values.put(DATA.UP_DOWN,emp_updown);
-			
-			db.insertVehicleData(values);
-			vcount1 = Integer.toString(db.getVehicleCount(1));
-			// TextView text1 = (TextView) findViewById(R.id.text1);
-			text1.setText(vcount1);
-			break;
+			case R.id.image1:
+				System.out.println("Image one  Clicked;");
+				System.out.println("1="+userId+" "+data_Dt+" "+time_Tm+" "+userLocation+" "+timestampvalue+" "+emp_updown );
+				ContentValues values = new ContentValues();
+				values.put(DATA.VEHICLE_ID, 1);
+				values.put(DATA.EMPLOYEE_ID, userId);
+				values.put(DATA.DATE, data_Dt);
+				values.put(DATA.TIME, time_Tm);
+				values.put(DATA.LOCATION_ID, userLocation);
+				values.put(DATA.TIMESTAMP,timestampvalue);
+				values.put(DATA.UP_DOWN,emp_updown);
+				
+				db.insertVehicleData(values);
+				vcount1 = Integer.toString(db.getVehicleCount(1));
+				// TextView text1 = (TextView) findViewById(R.id.text1);
+				text1.setText(vcount1);
+				break;
 
-		case R.id.image2:
-			System.out.println("Image two  Clicked;");
+			case R.id.image2:
+				System.out.println("Image two  Clicked;");
 
-			ContentValues values1 = new ContentValues();
-			values1.put(DATA.VEHICLE_ID, 2);
-			values1.put(DATA.EMPLOYEE_ID, userId);
-			values1.put(DATA.DATE, data_Dt);
-			values1.put(DATA.TIME, time_Tm);
-			values1.put(DATA.LOCATION_ID, userLocation);
-			values1.put(DATA.TIMESTAMP,timestampvalue);
-			values1.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values1);
-			vcount2 = Integer.toString(db.getVehicleCount(2));
+				ContentValues values1 = new ContentValues();
+				values1.put(DATA.VEHICLE_ID, 2);
+				values1.put(DATA.EMPLOYEE_ID, userId);
+				values1.put(DATA.DATE, data_Dt);
+				values1.put(DATA.TIME, time_Tm);
+				values1.put(DATA.LOCATION_ID, userLocation);
+				values1.put(DATA.TIMESTAMP,timestampvalue);
+				values1.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values1);
+				vcount2 = Integer.toString(db.getVehicleCount(2));
 
-			// TextView text2 = (TextView) findViewById(R.id.text2);
-			text2.setText(vcount2);
+				// TextView text2 = (TextView) findViewById(R.id.text2);
+				text2.setText(vcount2);
 
-			break;
-		case R.id.image3:
-			// System.out.println("Image two  Clicked;");
+				break;
+			case R.id.image3:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values3 = new ContentValues();
-			values3.put(DATA.VEHICLE_ID, 3);
-			values3.put(DATA.EMPLOYEE_ID, userId);
-			values3.put(DATA.DATE, data_Dt);
-			values3.put(DATA.TIME, time_Tm);
-			values3.put(DATA.LOCATION_ID, userLocation);
-			values3.put(DATA.TIMESTAMP,timestampvalue);
-			values3.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values3);
-			vcount3 = Integer.toString(db.getVehicleCount(3));
-			// TextView text3 = (TextView) findViewById(R.id.text3);
-			text3.setText(vcount3);
+				ContentValues values3 = new ContentValues();
+				values3.put(DATA.VEHICLE_ID, 3);
+				values3.put(DATA.EMPLOYEE_ID, userId);
+				values3.put(DATA.DATE, data_Dt);
+				values3.put(DATA.TIME, time_Tm);
+				values3.put(DATA.LOCATION_ID, userLocation);
+				values3.put(DATA.TIMESTAMP,timestampvalue);
+				values3.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values3);
+				vcount3 = Integer.toString(db.getVehicleCount(3));
+				// TextView text3 = (TextView) findViewById(R.id.text3);
+				text3.setText(vcount3);
 
-			break;
-		case R.id.image4:
-			// System.out.println("Image two  Clicked;");
+				break;
+			case R.id.image4:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values4 = new ContentValues();
-			values4.put(DATA.VEHICLE_ID, 4);
-			values4.put(DATA.EMPLOYEE_ID, userId);
-			values4.put(DATA.DATE, data_Dt);
-			values4.put(DATA.TIME, time_Tm);
-			values4.put(DATA.LOCATION_ID, userLocation);
-			values4.put(DATA.TIMESTAMP,timestampvalue);
-			values4.put(DATA.UP_DOWN,emp_updown);
-			
-			db.insertVehicleData(values4);
-			vcount4 = Integer.toString(db.getVehicleCount(4));
-			// TextView text4 = (TextView) findViewById(R.id.text4);
-			text4.setText(vcount4);
+				ContentValues values4 = new ContentValues();
+				values4.put(DATA.VEHICLE_ID, 4);
+				values4.put(DATA.EMPLOYEE_ID, userId);
+				values4.put(DATA.DATE, data_Dt);
+				values4.put(DATA.TIME, time_Tm);
+				values4.put(DATA.LOCATION_ID, userLocation);
+				values4.put(DATA.TIMESTAMP,timestampvalue);
+				values4.put(DATA.UP_DOWN,emp_updown);
+				
+				db.insertVehicleData(values4);
+				vcount4 = Integer.toString(db.getVehicleCount(4));
+				// TextView text4 = (TextView) findViewById(R.id.text4);
+				text4.setText(vcount4);
 
-			break;
-		case R.id.image5:
-			// System.out.println("Image two  Clicked;");
+				break;
+			case R.id.image5:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values5 = new ContentValues();
-			values5.put(DATA.VEHICLE_ID, 5);
-			values5.put(DATA.EMPLOYEE_ID, userId);
-			values5.put(DATA.DATE, data_Dt);
-			values5.put(DATA.TIME, time_Tm);
-			values5.put(DATA.LOCATION_ID, userLocation);
-			values5.put(DATA.TIMESTAMP,timestampvalue);
-			values5.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values5);
-			vcount5 = Integer.toString(db.getVehicleCount(5));
-			// TextView text5 = (TextView) findViewById(R.id.text5);
-			text5.setText(vcount5);
+				ContentValues values5 = new ContentValues();
+				values5.put(DATA.VEHICLE_ID, 5);
+				values5.put(DATA.EMPLOYEE_ID, userId);
+				values5.put(DATA.DATE, data_Dt);
+				values5.put(DATA.TIME, time_Tm);
+				values5.put(DATA.LOCATION_ID, userLocation);
+				values5.put(DATA.TIMESTAMP,timestampvalue);
+				values5.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values5);
+				vcount5 = Integer.toString(db.getVehicleCount(5));
+				// TextView text5 = (TextView) findViewById(R.id.text5);
+				text5.setText(vcount5);
 
-			break;
-		case R.id.image6:
-			// System.out.println("Image two  Clicked;");
+				break;
+			case R.id.image6:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values6 = new ContentValues();
-			values6.put(DATA.VEHICLE_ID, 6);
-			values6.put(DATA.EMPLOYEE_ID, userId);
-			values6.put(DATA.DATE, data_Dt);
-			values6.put(DATA.TIME, time_Tm);
-			values6.put(DATA.LOCATION_ID, userLocation);
-			values6.put(DATA.TIMESTAMP,timestampvalue);
-			values6.put(DATA.UP_DOWN,emp_updown);
-			
-			db.insertVehicleData(values6);
-			vcount6 = Integer.toString(db.getVehicleCount(6));
-			// TextView text6 = (TextView) findViewById(R.id.text6);
-			text6.setText(vcount6);
+				ContentValues values6 = new ContentValues();
+				values6.put(DATA.VEHICLE_ID, 6);
+				values6.put(DATA.EMPLOYEE_ID, userId);
+				values6.put(DATA.DATE, data_Dt);
+				values6.put(DATA.TIME, time_Tm);
+				values6.put(DATA.LOCATION_ID, userLocation);
+				values6.put(DATA.TIMESTAMP,timestampvalue);
+				values6.put(DATA.UP_DOWN,emp_updown);
+				
+				db.insertVehicleData(values6);
+				vcount6 = Integer.toString(db.getVehicleCount(6));
+				// TextView text6 = (TextView) findViewById(R.id.text6);
+				text6.setText(vcount6);
 
-			break;
-		case R.id.image7:
-			// System.out.println("Image two  Clicked;");
+				break;
+			case R.id.image7:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values7 = new ContentValues();
-			values7.put(DATA.VEHICLE_ID, 7);
-			values7.put(DATA.EMPLOYEE_ID, userId);
-			values7.put(DATA.DATE, data_Dt);
-			values7.put(DATA.TIME, time_Tm);
-			values7.put(DATA.LOCATION_ID, userLocation);
-			values7.put(DATA.TIMESTAMP,timestampvalue);
-			values7.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values7);
-			vcount7 = Integer.toString(db.getVehicleCount(7));
-			// TextView text7 = (TextView) findViewById(R.id.text7);
-			text7.setText(vcount7);
+				ContentValues values7 = new ContentValues();
+				values7.put(DATA.VEHICLE_ID, 7);
+				values7.put(DATA.EMPLOYEE_ID, userId);
+				values7.put(DATA.DATE, data_Dt);
+				values7.put(DATA.TIME, time_Tm);
+				values7.put(DATA.LOCATION_ID, userLocation);
+				values7.put(DATA.TIMESTAMP,timestampvalue);
+				values7.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values7);
+				vcount7 = Integer.toString(db.getVehicleCount(7));
+				// TextView text7 = (TextView) findViewById(R.id.text7);
+				text7.setText(vcount7);
 
-			break;
-		case R.id.image8:
-			// System.out.println("Image two  Clicked;");
+				break;
+			case R.id.image8:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values8 = new ContentValues();
-			values8.put(DATA.VEHICLE_ID, 8);
-			values8.put(DATA.EMPLOYEE_ID, userId);
-			values8.put(DATA.DATE, data_Dt);
-			values8.put(DATA.TIME, time_Tm);
-			values8.put(DATA.LOCATION_ID, userLocation);
-			values8.put(DATA.TIMESTAMP,timestampvalue);
-			values8.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values8);
-			vcount8 = Integer.toString(db.getVehicleCount(8));
-			// TextView text8 = (TextView) findViewById(R.id.text8);
-			text8.setText(vcount8);
+				ContentValues values8 = new ContentValues();
+				values8.put(DATA.VEHICLE_ID, 8);
+				values8.put(DATA.EMPLOYEE_ID, userId);
+				values8.put(DATA.DATE, data_Dt);
+				values8.put(DATA.TIME, time_Tm);
+				values8.put(DATA.LOCATION_ID, userLocation);
+				values8.put(DATA.TIMESTAMP,timestampvalue);
+				values8.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values8);
+				vcount8 = Integer.toString(db.getVehicleCount(8));
+				// TextView text8 = (TextView) findViewById(R.id.text8);
+				text8.setText(vcount8);
 
-			break;
-		case R.id.image9:
-			// System.out.println("Image two  Clicked;");
+				break;
+			case R.id.image9:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values9 = new ContentValues();
-			values9.put(DATA.VEHICLE_ID, 9);
-			values9.put(DATA.EMPLOYEE_ID, userId);
-			values9.put(DATA.DATE, data_Dt);
-			values9.put(DATA.TIME, time_Tm);
-			values9.put(DATA.LOCATION_ID, userLocation);
-			values9.put(DATA.TIMESTAMP,timestampvalue);
-			values9.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values9);
-			vcount9 = Integer.toString(db.getVehicleCount(9));
-			// TextView text9 = (TextView) findViewById(R.id.text9);
-			text9.setText(vcount9);
+				ContentValues values9 = new ContentValues();
+				values9.put(DATA.VEHICLE_ID, 9);
+				values9.put(DATA.EMPLOYEE_ID, userId);
+				values9.put(DATA.DATE, data_Dt);
+				values9.put(DATA.TIME, time_Tm);
+				values9.put(DATA.LOCATION_ID, userLocation);
+				values9.put(DATA.TIMESTAMP,timestampvalue);
+				values9.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values9);
+				vcount9 = Integer.toString(db.getVehicleCount(9));
+				// TextView text9 = (TextView) findViewById(R.id.text9);
+				text9.setText(vcount9);
 
-			break;
-		case R.id.image10:
-			// System.out.println("Image two  Clicked;");
+				break;
+			case R.id.image10:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values10 = new ContentValues();
-			values10.put(DATA.VEHICLE_ID, 10);
-			values10.put(DATA.EMPLOYEE_ID, userId);
-			values10.put(DATA.DATE, data_Dt);
-			values10.put(DATA.TIME, time_Tm);
-			values10.put(DATA.LOCATION_ID, userLocation);
-			values10.put(DATA.TIMESTAMP,timestampvalue);
-			values10.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values10);
-			vcount10 = Integer.toString(db.getVehicleCount(10));
-			// TextView text10 = (TextView) findViewById(R.id.text10);
-			text10.setText(vcount10);
+				ContentValues values10 = new ContentValues();
+				values10.put(DATA.VEHICLE_ID, 10);
+				values10.put(DATA.EMPLOYEE_ID, userId);
+				values10.put(DATA.DATE, data_Dt);
+				values10.put(DATA.TIME, time_Tm);
+				values10.put(DATA.LOCATION_ID, userLocation);
+				values10.put(DATA.TIMESTAMP,timestampvalue);
+				values10.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values10);
+				vcount10 = Integer.toString(db.getVehicleCount(10));
+				// TextView text10 = (TextView) findViewById(R.id.text10);
+				text10.setText(vcount10);
 
-			break;
+				break;
 
-		case R.id.image11:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image11:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values11 = new ContentValues();
-			values11.put(DATA.VEHICLE_ID, 11);
-			values11.put(DATA.EMPLOYEE_ID, userId);
-			values11.put(DATA.DATE, data_Dt);
-			values11.put(DATA.TIME, time_Tm);
-			values11.put(DATA.LOCATION_ID, userLocation);
-			values11.put(DATA.TIMESTAMP,timestampvalue);
-			values11.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values11);
-			vcount11 = Integer.toString(db.getVehicleCount(11));
-			// TextView text11 = (TextView) findViewById(R.id.text11);
-			text11.setText(vcount11);
+				ContentValues values11 = new ContentValues();
+				values11.put(DATA.VEHICLE_ID, 11);
+				values11.put(DATA.EMPLOYEE_ID, userId);
+				values11.put(DATA.DATE, data_Dt);
+				values11.put(DATA.TIME, time_Tm);
+				values11.put(DATA.LOCATION_ID, userLocation);
+				values11.put(DATA.TIMESTAMP,timestampvalue);
+				values11.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values11);
+				vcount11 = Integer.toString(db.getVehicleCount(11));
+				// TextView text11 = (TextView) findViewById(R.id.text11);
+				text11.setText(vcount11);
 
-			break;
+				break;
 
-		case R.id.image12:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image12:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values12 = new ContentValues();
-			values12.put(DATA.VEHICLE_ID, 12);
-			values12.put(DATA.EMPLOYEE_ID, userId);
-			values12.put(DATA.DATE, data_Dt);
-			values12.put(DATA.TIME, time_Tm);
-			values12.put(DATA.LOCATION_ID, userLocation);
-			values12.put(DATA.TIMESTAMP,timestampvalue);
-			values12.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values12);
-			vcount12 = Integer.toString(db.getVehicleCount(12));
-			// TextView text12 = (TextView) findViewById(R.id.text12);
-			text12.setText(vcount12);
+				ContentValues values12 = new ContentValues();
+				values12.put(DATA.VEHICLE_ID, 12);
+				values12.put(DATA.EMPLOYEE_ID, userId);
+				values12.put(DATA.DATE, data_Dt);
+				values12.put(DATA.TIME, time_Tm);
+				values12.put(DATA.LOCATION_ID, userLocation);
+				values12.put(DATA.TIMESTAMP,timestampvalue);
+				values12.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values12);
+				vcount12 = Integer.toString(db.getVehicleCount(12));
+				// TextView text12 = (TextView) findViewById(R.id.text12);
+				text12.setText(vcount12);
 
-			break;
+				break;
 
-		case R.id.image13:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image13:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values13 = new ContentValues();
-			values13.put(DATA.VEHICLE_ID, 13);
-			values13.put(DATA.EMPLOYEE_ID, userId);
-			values13.put(DATA.DATE, data_Dt);
-			values13.put(DATA.TIME, time_Tm);
-			values13.put(DATA.LOCATION_ID, userLocation);
-			values13.put(DATA.TIMESTAMP,timestampvalue);
-			values13.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values13);
-			vcount13 = Integer.toString(db.getVehicleCount(13));
-			// TextView text13 = (TextView) findViewById(R.id.text13);
-			text13.setText(vcount13);
+				ContentValues values13 = new ContentValues();
+				values13.put(DATA.VEHICLE_ID, 13);
+				values13.put(DATA.EMPLOYEE_ID, userId);
+				values13.put(DATA.DATE, data_Dt);
+				values13.put(DATA.TIME, time_Tm);
+				values13.put(DATA.LOCATION_ID, userLocation);
+				values13.put(DATA.TIMESTAMP,timestampvalue);
+				values13.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values13);
+				vcount13 = Integer.toString(db.getVehicleCount(13));
+				// TextView text13 = (TextView) findViewById(R.id.text13);
+				text13.setText(vcount13);
 
-			break;
+				break;
 
-		case R.id.image14:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image14:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values14 = new ContentValues();
-			values14.put(DATA.VEHICLE_ID, 14);
-			values14.put(DATA.EMPLOYEE_ID, userId);
-			values14.put(DATA.DATE, data_Dt);
-			values14.put(DATA.TIME, time_Tm);
-			values14.put(DATA.LOCATION_ID, userLocation);
-			values14.put(DATA.TIMESTAMP,timestampvalue);
-			values14.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values14);
-			vcount14 = Integer.toString(db.getVehicleCount(14));
-			// TextView text14 = (TextView) findViewById(R.id.text14);
-			text14.setText(vcount14);
+				ContentValues values14 = new ContentValues();
+				values14.put(DATA.VEHICLE_ID, 14);
+				values14.put(DATA.EMPLOYEE_ID, userId);
+				values14.put(DATA.DATE, data_Dt);
+				values14.put(DATA.TIME, time_Tm);
+				values14.put(DATA.LOCATION_ID, userLocation);
+				values14.put(DATA.TIMESTAMP,timestampvalue);
+				values14.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values14);
+				vcount14 = Integer.toString(db.getVehicleCount(14));
+				// TextView text14 = (TextView) findViewById(R.id.text14);
+				text14.setText(vcount14);
 
-			break;
+				break;
 
-		case R.id.image15:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image15:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values15 = new ContentValues();
-			values15.put(DATA.VEHICLE_ID, 15);
-			values15.put(DATA.EMPLOYEE_ID, userId);
-			values15.put(DATA.DATE, data_Dt);
-			values15.put(DATA.TIME, time_Tm);
-			values15.put(DATA.LOCATION_ID, userLocation);
-			values15.put(DATA.TIMESTAMP,timestampvalue);
-			values15.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values15);
-			vcount15 = Integer.toString(db.getVehicleCount(15));
-			// TextView text15 = (TextView) findViewById(R.id.text15);
-			text15.setText(vcount15);
+				ContentValues values15 = new ContentValues();
+				values15.put(DATA.VEHICLE_ID, 15);
+				values15.put(DATA.EMPLOYEE_ID, userId);
+				values15.put(DATA.DATE, data_Dt);
+				values15.put(DATA.TIME, time_Tm);
+				values15.put(DATA.LOCATION_ID, userLocation);
+				values15.put(DATA.TIMESTAMP,timestampvalue);
+				values15.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values15);
+				vcount15 = Integer.toString(db.getVehicleCount(15));
+				// TextView text15 = (TextView) findViewById(R.id.text15);
+				text15.setText(vcount15);
 
-			break;
+				break;
 
-		case R.id.image16:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image16:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values16 = new ContentValues();
-			values16.put(DATA.VEHICLE_ID, 16);
-			values16.put(DATA.EMPLOYEE_ID, userId);
-			values16.put(DATA.DATE, data_Dt);
-			values16.put(DATA.TIME, time_Tm);
-			values16.put(DATA.LOCATION_ID, userLocation);
-			values16.put(DATA.TIMESTAMP,timestampvalue);
-			values16.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values16);
-			vcount16 = Integer.toString(db.getVehicleCount(16));
-			// TextView text16 = (TextView) findViewById(R.id.text16);
-			text16.setText(vcount16);
+				ContentValues values16 = new ContentValues();
+				values16.put(DATA.VEHICLE_ID, 16);
+				values16.put(DATA.EMPLOYEE_ID, userId);
+				values16.put(DATA.DATE, data_Dt);
+				values16.put(DATA.TIME, time_Tm);
+				values16.put(DATA.LOCATION_ID, userLocation);
+				values16.put(DATA.TIMESTAMP,timestampvalue);
+				values16.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values16);
+				vcount16 = Integer.toString(db.getVehicleCount(16));
+				// TextView text16 = (TextView) findViewById(R.id.text16);
+				text16.setText(vcount16);
 
-			break;
+				break;
 
-		case R.id.image17:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image17:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values17 = new ContentValues();
-			values17.put(DATA.VEHICLE_ID, 17);
-			values17.put(DATA.EMPLOYEE_ID, userId);
-			values17.put(DATA.DATE, data_Dt);
-			values17.put(DATA.TIME, time_Tm);
-			values17.put(DATA.LOCATION_ID, userLocation);
-			values17.put(DATA.TIMESTAMP,timestampvalue);
-			values17.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values17);
-			vcount17 = Integer.toString(db.getVehicleCount(17));
-			// TextView text17 = (TextView) findViewById(R.id.text17);
-			text17.setText(vcount17);
+				ContentValues values17 = new ContentValues();
+				values17.put(DATA.VEHICLE_ID, 17);
+				values17.put(DATA.EMPLOYEE_ID, userId);
+				values17.put(DATA.DATE, data_Dt);
+				values17.put(DATA.TIME, time_Tm);
+				values17.put(DATA.LOCATION_ID, userLocation);
+				values17.put(DATA.TIMESTAMP,timestampvalue);
+				values17.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values17);
+				vcount17 = Integer.toString(db.getVehicleCount(17));
+				// TextView text17 = (TextView) findViewById(R.id.text17);
+				text17.setText(vcount17);
 
-			break;
+				break;
 
-		case R.id.image18:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image18:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values18 = new ContentValues();
-			values18.put(DATA.VEHICLE_ID, 18);
-			values18.put(DATA.EMPLOYEE_ID, userId);
-			values18.put(DATA.DATE, data_Dt);
-			values18.put(DATA.TIME, time_Tm);
-			values18.put(DATA.LOCATION_ID, userLocation);
-			values18.put(DATA.TIMESTAMP,timestampvalue);
-			values18.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values18);
-			vcount18 = Integer.toString(db.getVehicleCount(18));
-			// TextView text18 = (TextView) findViewById(R.id.text18);
-			text18.setText(vcount18);
+				ContentValues values18 = new ContentValues();
+				values18.put(DATA.VEHICLE_ID, 18);
+				values18.put(DATA.EMPLOYEE_ID, userId);
+				values18.put(DATA.DATE, data_Dt);
+				values18.put(DATA.TIME, time_Tm);
+				values18.put(DATA.LOCATION_ID, userLocation);
+				values18.put(DATA.TIMESTAMP,timestampvalue);
+				values18.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values18);
+				vcount18 = Integer.toString(db.getVehicleCount(18));
+				// TextView text18 = (TextView) findViewById(R.id.text18);
+				text18.setText(vcount18);
 
-			break;
+				break;
 
-		case R.id.image19:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image19:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values19 = new ContentValues();
-			values19.put(DATA.VEHICLE_ID, 19);
-			values19.put(DATA.EMPLOYEE_ID, userId);
-			values19.put(DATA.DATE, data_Dt);
-			values19.put(DATA.TIME, time_Tm);
-			values19.put(DATA.LOCATION_ID, userLocation);
-			values19.put(DATA.TIMESTAMP,timestampvalue);
-			values19.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values19);
-			vcount19 = Integer.toString(db.getVehicleCount(19));
-			// TextView text19 = (TextView) findViewById(R.id.text19);
-			text19.setText(vcount19);
+				ContentValues values19 = new ContentValues();
+				values19.put(DATA.VEHICLE_ID, 19);
+				values19.put(DATA.EMPLOYEE_ID, userId);
+				values19.put(DATA.DATE, data_Dt);
+				values19.put(DATA.TIME, time_Tm);
+				values19.put(DATA.LOCATION_ID, userLocation);
+				values19.put(DATA.TIMESTAMP,timestampvalue);
+				values19.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values19);
+				vcount19 = Integer.toString(db.getVehicleCount(19));
+				// TextView text19 = (TextView) findViewById(R.id.text19);
+				text19.setText(vcount19);
 
-			break;
+				break;
 
-		case R.id.image20:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image20:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values20 = new ContentValues();
-			values20.put(DATA.VEHICLE_ID, 20);
-			values20.put(DATA.EMPLOYEE_ID, userId);
-			values20.put(DATA.DATE, data_Dt);
-			values20.put(DATA.TIME, time_Tm);
-			values20.put(DATA.LOCATION_ID, userLocation);
-			values20.put(DATA.TIMESTAMP,timestampvalue);
-			values20.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values20);
-			vcount20 = Integer.toString(db.getVehicleCount(20));
-			// TextView text20 = (TextView) findViewById(R.id.text20);
-			text20.setText(vcount20);
+				ContentValues values20 = new ContentValues();
+				values20.put(DATA.VEHICLE_ID, 20);
+				values20.put(DATA.EMPLOYEE_ID, userId);
+				values20.put(DATA.DATE, data_Dt);
+				values20.put(DATA.TIME, time_Tm);
+				values20.put(DATA.LOCATION_ID, userLocation);
+				values20.put(DATA.TIMESTAMP,timestampvalue);
+				values20.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values20);
+				vcount20 = Integer.toString(db.getVehicleCount(20));
+				// TextView text20 = (TextView) findViewById(R.id.text20);
+				text20.setText(vcount20);
 
-			break;
+				break;
 
-		case R.id.image21:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image21:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values21 = new ContentValues();
-			values21.put(DATA.VEHICLE_ID, 21);
-			values21.put(DATA.EMPLOYEE_ID, userId);
-			values21.put(DATA.DATE, data_Dt);
-			values21.put(DATA.TIME, time_Tm);
-			values21.put(DATA.LOCATION_ID, userLocation);
-			values21.put(DATA.TIMESTAMP,timestampvalue);
-			values21.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values21);
-			vcount21 = Integer.toString(db.getVehicleCount(21));
-			// TextView text21 = (TextView) findViewById(R.id.text21);
-			text21.setText(vcount21);
+				ContentValues values21 = new ContentValues();
+				values21.put(DATA.VEHICLE_ID, 21);
+				values21.put(DATA.EMPLOYEE_ID, userId);
+				values21.put(DATA.DATE, data_Dt);
+				values21.put(DATA.TIME, time_Tm);
+				values21.put(DATA.LOCATION_ID, userLocation);
+				values21.put(DATA.TIMESTAMP,timestampvalue);
+				values21.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values21);
+				vcount21 = Integer.toString(db.getVehicleCount(21));
+				// TextView text21 = (TextView) findViewById(R.id.text21);
+				text21.setText(vcount21);
 
-			break;
+				break;
 
-		case R.id.image22:
-			// System.out.println("Image two  Clicked;");
+			case R.id.image22:
+				// System.out.println("Image two  Clicked;");
 
-			ContentValues values22 = new ContentValues();
-			values22.put(DATA.VEHICLE_ID, 22);
-			values22.put(DATA.EMPLOYEE_ID, userId);
-			values22.put(DATA.DATE, data_Dt);
-			values22.put(DATA.TIME, time_Tm);
-			values22.put(DATA.LOCATION_ID, userLocation);
-			values22.put(DATA.TIMESTAMP,timestampvalue);
-			values22.put(DATA.UP_DOWN,emp_updown);
-			db.insertVehicleData(values22);
-			vcount22 = Integer.toString(db.getVehicleCount(22));
-			// TextView text22 = (TextView) findViewById(R.id.text22);
-			text22.setText(vcount22);
+				ContentValues values22 = new ContentValues();
+				values22.put(DATA.VEHICLE_ID, 22);
+				values22.put(DATA.EMPLOYEE_ID, userId);
+				values22.put(DATA.DATE, data_Dt);
+				values22.put(DATA.TIME, time_Tm);
+				values22.put(DATA.LOCATION_ID, userLocation);
+				values22.put(DATA.TIMESTAMP,timestampvalue);
+				values22.put(DATA.UP_DOWN,emp_updown);
+				db.insertVehicleData(values22);
+				vcount22 = Integer.toString(db.getVehicleCount(22));
+				// TextView text22 = (TextView) findViewById(R.id.text22);
+				text22.setText(vcount22);
 
-			break;
+				break;
 
-		default:
-			break;
+			default:
+				break;
+			}
 		}
+		
+		
 
 	}
 	@Override
@@ -720,7 +749,7 @@ public class CustomVehicleActivity extends Activity implements View.OnClickListe
         	//break;
         case R.id.menu_reset:
         	db.deletTablee();
-
+        	
     		text1.setText(vcount1);
     		text2.setText(vcount2);
     		text3.setText(vcount3);
@@ -745,9 +774,12 @@ public class CustomVehicleActivity extends Activity implements View.OnClickListe
     		text22.setText(vcount22);
     		
         	Toast.makeText(CustomVehicleActivity.this, "Reset is Selected", Toast.LENGTH_SHORT).show();
+        	Intent resetintent = new Intent(CustomVehicleActivity.this, CustomActivity.class);
+  	  	  	CustomVehicleActivity.this.startActivity(resetintent);
+  	  	  	CustomVehicleActivity.this.finish();
             return true;
         case R.id.menu_exit:
-        	finish();
+        	CustomVehicleActivity.this.finish();
         	Toast.makeText(CustomVehicleActivity.this, "Exit", Toast.LENGTH_SHORT).show();
             return true;
        
@@ -756,6 +788,14 @@ public class CustomVehicleActivity extends Activity implements View.OnClickListe
         }
         //return true;
     }
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0){
+                finish();
+        }
 
-
+        return super.onKeyDown(keyCode, event);
+    }
+  
 }

@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
+import android.view.KeyEvent;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -186,9 +187,17 @@ public class VehicleActivity extends Activity implements View.OnClickListener{
 		image20.setOnClickListener(this);
 		image21.setOnClickListener(this);
 		image22.setOnClickListener(this);
-
+		
 	}
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event)
+    {
+        if (keyCode == KeyEvent.KEYCODE_BACK && event.getRepeatCount() == 0){
+                finish();
+        }
 
+        return super.onKeyDown(keyCode, event);
+    }
 	@SuppressLint("SimpleDateFormat")
 	@Override
 	public void onClick(View v) {
@@ -658,8 +667,12 @@ public class VehicleActivity extends Activity implements View.OnClickListener{
     		text22.setText(vcount22);
     		
         	Toast.makeText(VehicleActivity.this, "Reset is Selected", Toast.LENGTH_SHORT).show();
+        	Intent resetintent = new Intent(VehicleActivity.this, EmployeeActivity.class);
+  	  	  	VehicleActivity.this.startActivity(resetintent);
+  	  	  	VehicleActivity.this.finish();
             return true;
         case R.id.menu_exit:
+        	VehicleActivity.this.finish();
         	Toast.makeText(VehicleActivity.this, "Exit", Toast.LENGTH_SHORT).show();
             return true;
        

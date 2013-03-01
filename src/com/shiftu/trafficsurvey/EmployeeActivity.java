@@ -63,6 +63,7 @@ public class EmployeeActivity extends Activity {
 					nIntentUserInfo.putExtra("empupdown", mSpinner1.getSelectedItem().toString());				
 					Log.e("User", empName.getText()+"and"+empLocation.getText());
 					startActivity(nIntentUserInfo);
+					finish();
 				}else
 				{					
 					mIntentUserInfo=new Intent(EmployeeActivity.this, VehicleActivity.class);
@@ -71,6 +72,7 @@ public class EmployeeActivity extends Activity {
 					mIntentUserInfo.putExtra("empupdown", mSpinner1.getSelectedItem().toString());				
 					Log.e("User", empName.getText()+"and"+empLocation.getText());
 					startActivity(mIntentUserInfo);
+					finish();
 				}
 				
 				

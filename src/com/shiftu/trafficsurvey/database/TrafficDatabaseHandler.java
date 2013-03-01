@@ -3,6 +3,7 @@ package com.shiftu.trafficsurvey.database;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import android.annotation.SuppressLint;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -19,7 +20,6 @@ public class TrafficDatabaseHandler {
 	public static final String DATABASE_NAME = "trafficsurvey.db";
 	static final int DATABASE_VERSION = 1;
 	private Context mContext;
-	private static TrafficDatabaseHandler sInstance = null;
 	SimpleDateFormat sdf;
 
 	public TrafficDatabaseHandler(Context context) {
@@ -193,6 +193,7 @@ public class TrafficDatabaseHandler {
 
 	}
 
+	@SuppressLint("SimpleDateFormat")
 	public int getVehicleCount(int vid) {
 		SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(
 				DATABASE_FILE_PATH + File.separator + mContext.getPackageName()
