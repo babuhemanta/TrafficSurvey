@@ -3,13 +3,13 @@ package com.shiftu.trafficsurvey.database;
 import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Date;
-import java.util.Locale;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import com.shiftu.trafficsurvey.VehicleActivity;
+import com.shiftu.trafficsurvey.CustomVehicleActivity;
+
 
 public class TrafficDatabaseHandler {
 	public static final String TAG = "TrafficDatabaseHelper";
@@ -21,13 +21,6 @@ public class TrafficDatabaseHandler {
 	private Context mContext;
 	private static TrafficDatabaseHandler sInstance = null;
 	SimpleDateFormat sdf;
-	/*
-	 * public static final String DATABASE_NAME = "trafficsurvey.db"; final
-	 * static String path = "trafficsurvey.db"; static final int
-	 * DATABASE_VERSION = 1; private Context mContext; private static
-	 * TrafficDatabaseHandler sInstance = null; private static String
-	 * DATABASE_FILE_PATH ="/data/data/";
-	 */
 
 	public TrafficDatabaseHandler(Context context) {
 		// super(context, DATABASE_FILE_PATH+context.getPackageName()+
@@ -35,13 +28,6 @@ public class TrafficDatabaseHandler {
 		this.mContext = context;
 	}
 
-	/*
-	 * public TrafficDatabaseHandler(Context context) { super(context,
-	 * DATABASE_FILE_PATH+File.separator+DATABASE_NAME, null, DATABASE_VERSION);
-	 * mContext = context; } static synchronized TrafficDatabaseHandler
-	 * getInstance(Context context) { if (sInstance == null) { sInstance = new
-	 * TrafficDatabaseHandler(context); } return sInstance; }
-	 */
 	public static class DATA {
 		public static final String TABLE_NAME = "data_info";
 		public static final String _ID = "_id";
@@ -52,6 +38,7 @@ public class TrafficDatabaseHandler {
 		public static final String MOVE = "move";
 		public static final String LOCATION_ID = "loc_id";
 		public static final String TIMESTAMP = "timestamp";
+		public static final String UP_DOWN = "up_down";
 	}
 
 	public static class VEHICLE {
@@ -79,7 +66,16 @@ public class TrafficDatabaseHandler {
 						+ File.separator + DATABASE_NAME, null);
 		// SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
-		values.put(USER.EMP_NAME, VehicleActivity.emp_name);
+		System.out.println("Values from VehicleActivity "+VehicleActivity.emp_name);
+		System.out.println("Values from CustomVehicleActivity "+CustomVehicleActivity.emp_name);
+		if(VehicleActivity.emp_name!=null)
+		{
+			values.put(USER.EMP_NAME, VehicleActivity.emp_name);
+		}else
+		{
+			values.put(USER.EMP_NAME, CustomVehicleActivity.emp_name);
+		}
+		
 		System.out.println("Trafficdatabase " + VehicleActivity.emp_name);
 		long rowId = db.insert(USER.TABLE_NAME, null, values);
 		db.close();
@@ -94,7 +90,14 @@ public class TrafficDatabaseHandler {
 						+ File.separator + DATABASE_NAME, null);
 		// SQLiteDatabase db = this.getWritableDatabase();
 		ContentValues values = new ContentValues();
-		values.put(LOCATION.LOCATION_NAME, VehicleActivity.emp_location);
+		if(VehicleActivity.emp_location!=null)
+		{
+			values.put(LOCATION.LOCATION_NAME, VehicleActivity.emp_location);
+		}else{
+			values.put(LOCATION.LOCATION_NAME, CustomVehicleActivity.emp_location);
+		}
+		
+
 		System.out.println("Trafficdatabase " + VehicleActivity.emp_location);
 		long rowId = db.insert(LOCATION.TABLE_NAME, null, values);
 		db.close();
@@ -103,11 +106,36 @@ public class TrafficDatabaseHandler {
 
 	}
 
+	public void deletTablee() {
+		SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(
+				DATABASE_FILE_PATH + File.separator + mContext.getPackageName()
+						+ File.separator + DATABASE_NAME, null);
+		try {
+			String deleteuser = "DELETE FROM user_info";
+			db.execSQL(deleteuser);
+
+			String deleteloc = "DELETE FROM loc_info";
+			db.execSQL(deleteloc);
+
+			String deletedata = "DELETE FROM data_info";
+			db.execSQL(deletedata);
+		} catch (Exception e) {
+			e.printStackTrace();
+		} finally {
+			db.close();
+			db.releaseReference();
+		}
+
+	}
+
 	public Cursor dataviewinfo() {
 		SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(
 				DATABASE_FILE_PATH + File.separator + mContext.getPackageName()
 						+ File.separator + DATABASE_NAME, null);
-		Cursor cursor=db.rawQuery("SELECT v.v_name,d._date,d._time from vehicle_info v,data_info d WHERE v.v_id = d.v_id", null);
+		Cursor cursor = db
+				.rawQuery(
+						"SELECT v.v_name,d._date,d._time,d.up_down from vehicle_info v,data_info d WHERE v.v_id = d.v_id",
+						null);
 		return cursor;
 
 	}
@@ -120,20 +148,6 @@ public class TrafficDatabaseHandler {
 		// Create tables again
 		onCreate(db);
 	}
-
-	/*public Cursor selectdata(String date, String fromtime, String totime)
-
-	{
-		SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(
-				DATABASE_FILE_PATH + File.separator + mContext.getPackageName()
-						+ File.separator + DATABASE_NAME, null);
-		Cursor cursor = db.rawQuery(
-				"SELECT v_id,_date, COUNT(v_id) as count FROM data_info WHERE _date= '"
-						+ date + "'and _time between '" + fromtime + "' and '"
-						+ totime + "' GROUP BY v_id", null);
-		return cursor;
-
-	}*/
 
 	public void insertVehicleData(ContentValues values) {
 		SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(
@@ -148,27 +162,28 @@ public class TrafficDatabaseHandler {
 	public int reportview(int timestam, int vid) {
 		int ct = 0;
 		String timestam1;
-		if(timestam == 1||timestam == 2||timestam == 3||timestam == 4||timestam == 5||timestam == 6||timestam == 7||timestam == 8||timestam == 9)
-		{
-			 timestam1=0+Integer.toString(timestam);	
-			
-		}else{
-			timestam1=Integer.toString(timestam);
+		if (timestam == 1 || timestam == 2 || timestam == 3 || timestam == 4
+				|| timestam == 5 || timestam == 6 || timestam == 7
+				|| timestam == 8 || timestam == 9) {
+			timestam1 = 0 + Integer.toString(timestam);
+
+		} else {
+			timestam1 = Integer.toString(timestam);
 		}
-		String vid1=Integer.toString(vid);
+		String vid1 = Integer.toString(vid);
 		SQLiteDatabase db = SQLiteDatabase.openOrCreateDatabase(
 				DATABASE_FILE_PATH + File.separator + mContext.getPackageName()
 						+ File.separator + DATABASE_NAME, null);
-//		String sql = "SELECT * FROM data_info WHERE timestamp='" + timestam1
-//				+ "' " + "and" + "v_id='" + vid1 + "'";
+		// String sql = "SELECT * FROM data_info WHERE timestamp='" + timestam1
+		// + "' " + "and" + "v_id='" + vid1 + "'";
 		Cursor cursor = null;
-		try{
-			cursor = db.rawQuery("SELECT * FROM data_info WHERE timestamp = '" + timestam1 +"' and v_id = '"+vid1+"'" , null);
+		try {
+			cursor = db.rawQuery("SELECT * FROM data_info WHERE timestamp = '"
+					+ timestam1 + "' and v_id = '" + vid1 + "'", null);
 			ct = cursor.getCount();
-		}catch(Exception e)
-		{
-			
-		}finally {
+		} catch (Exception e) {
+
+		} finally {
 			if (cursor != null && !cursor.isClosed()) {
 				cursor.close();
 				db.close();

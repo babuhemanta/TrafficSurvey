@@ -1,41 +1,39 @@
 package com.shiftu.trafficsurvey;
 
-import java.text.SimpleDateFormat;
-import java.util.Date;
 import android.annotation.SuppressLint;
 import android.app.Activity;
 import android.content.ContentValues;
 import android.content.Intent;
 import android.os.Bundle;
+import android.os.Handler;
+import android.os.SystemClock;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
-
 import com.shiftu.trafficsurvey.database.TrafficDatabaseHandler;
 import com.shiftu.trafficsurvey.database.TrafficDatabaseHandler.DATA;
 
-public class VehicleActivity extends Activity implements View.OnClickListener{
-
-
+public class CustomVehicleActivity extends Activity implements View.OnClickListener{
 	/**
 	 * 1. create 8X3 image view 2. onclick image increase the count 3. onclick
 	 * image show message the date and time
 	 */
 	public static int myClickCount = 0;
-	public static String emp_name;
+	public static String emp_name,custom_time;
 	public static String emp_location;
-	public static String emp_updown;
+	public static String emp_updown, custom_date;
 	private long userId;
-	private long userLocation;//userupdown;
+	private long userLocation;//,userupdown;
 	final static String path = "trafficsurvey.db";
 	
 	TextView text1, text2, text3, text4, text5, text6, text7, text8, text9,
 			text10, text11, text12, text13, text14, text15, text16, text17,
-			text18, text19, text20, text21, text22;
+			text18, text19, text20, text21, text22, text23;
 	Intent reportIntent, viewIntentdata;	
 	ImageView image1, image2, image3, image4, image5, image6, image7, image8,
 			image9, image10, image11, image12, image13, image14, image15,
@@ -44,33 +42,39 @@ public class VehicleActivity extends Activity implements View.OnClickListener{
 			vcount8, vcount9, vcount10, vcount11, vcount12, vcount13, vcount14,
 			vcount15, vcount16, vcount17, vcount18, vcount19, vcount20,
 			vcount21, vcount22;
-	
+	private TextView mTimeLabel;
+    private Button mStartButton;
+    private Button mStopButton;
+    private Button mResetButton;
+    private Handler mHandler = new Handler();
+	private long mMillisInitial;
+	int Hour, Min, Sec;
 	TrafficDatabaseHandler db;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
-
-		setContentView(R.layout.activity_vehicle);
-
+		setContentView(R.layout.activity_customvehicle);
 		/**
-		 * Already database exists in the Assets Folder copy the database file
-		 * into specified folder location.
+		 *  Get the EmplyeeName, Location and Direction passed from CustomActivity.java which passed from EmployeeActivity.
+		 *  Also new Intent values are included like CustomDate and CustomTime
 		 */
-		Intent intentname = getIntent();
-		// Get the EmplyeeName and Location passed from IntentExampleActivity
+		Intent intentname = getIntent();		
 		emp_name = intentname.getStringExtra("empName");
 		emp_location = intentname.getStringExtra("empLocation");
 		emp_updown=intentname.getStringExtra("empupdown");
-		reportIntent = new Intent(VehicleActivity.this, ReportActivity.class);
-		viewIntentdata=new Intent(VehicleActivity.this,DataviewActivity.class);
+		custom_date=intentname.getStringExtra("customDate");
+		custom_time=intentname.getStringExtra("customTime");
+		/**
+		 * End of getting Intent values from CustomActivity
+		 */
+		reportIntent = new Intent(CustomVehicleActivity.this, ReportActivity.class);
+		viewIntentdata=new Intent(CustomVehicleActivity.this,DataviewActivity.class);
 		Log.e("vehicle", emp_name + "." + emp_location);
-		System.out.println("Intent values are:" + emp_name + "and"
-				+ emp_location);
+		System.out.println("Intent values are:" + emp_name + " and "+ emp_location +"and "+custom_date+ " and "+custom_time+ " and "+emp_updown );
 		db = new TrafficDatabaseHandler(this);
 		userId = db.userInfo(emp_name);
-		userLocation = db.locInfo(emp_location);
-		//userupdown=db.updownInfo(emp_updown);
+		userLocation = db.locInfo(emp_location);		
 		
 		vcount1 = Integer.toString(db.getVehicleCount(1));
 		vcount2 = Integer.toString(db.getVehicleCount(2));
@@ -186,30 +190,113 @@ public class VehicleActivity extends Activity implements View.OnClickListener{
 		image20.setOnClickListener(this);
 		image21.setOnClickListener(this);
 		image22.setOnClickListener(this);
-
+		/**
+		 * coding for custom Time Calculation
+		 */
+		 mTimeLabel = (TextView) findViewById(R.id.text23);
+         mStartButton=(Button)findViewById(R.id.button1);
+         mStopButton=(Button) findViewById(R.id.button2);
+         mResetButton=(Button) findViewById(R.id.button3);
+         mTimeLabel.setText(custom_time);
+         //mStartTime = System.currentTimeMillis();
+         mStartButton.setOnClickListener(new Button.OnClickListener(){
+  		   @Override
+  		   public void onClick(View v) {
+  		    // TODO Auto-generated method stub
+  			  mStart();
+	  		  String split_cutomTime[]=custom_time.split(":");
+	          Hour=Integer.parseInt(split_cutomTime[0]);
+	          Min=Integer.parseInt(split_cutomTime[1]);
+	          Sec=Integer.parseInt(split_cutomTime[2]);
+  		  
+  		   }});
+         mStopButton.setOnClickListener(new Button.OnClickListener(){
+   		   @Override
+   		   public void onClick(View v) {
+   		    // TODO Auto-generated method stub
+   		    mPause();
+   		   }});
+         mResetButton.setOnClickListener(new Button.OnClickListener(){
+        	@Override
+  		   public void onClick(View v) {
+  		    // TODO Auto-generated method stub
+  		    mStop();
+  		    mTimeLabel.setText(custom_time);
+  		   }});
+    		   
 	}
+	private Runnable mUpdateTimeTask = new Runnable() {
+        public void run() {             
+     	   long millis = SystemClock.uptimeMillis() ;
+     	   long diff= millis - mMillisInitial ;
+     	   if(diff >= 500 )
+     	   {           		 
+     		   if(Sec < 59)
+     		   {
+     			   Sec++;
+     		   }
+     		   else if(Min < 59 ){
+     			   Sec=0;
+     			   Min++;
+     			   
+     		   }else if (Hour < 23)
+     		   {
+     			   Min=0;
+     			   Hour++;
+     		   }
+     		   else
+     		   {
+     			   Hour=0;
+     		   }
+     		   
+     		   mTimeLabel.setText(formatDigits(Hour)+":"+formatDigits(Min)+":"+formatDigits(Sec));
+     	   }
+     	  
+     	   mHandler.postAtTime(this, (SystemClock.uptimeMillis() + 700));            	  
+        }
+        private String formatDigits(long num) {
+    		return (num < 10) ? "0" + num : new Long(num).toString();
+    		}
+     };
+     
+ 
+     private void mStart()
+     {
+         super.onPause();
+         mMillisInitial = SystemClock.uptimeMillis() ;
+         mHandler.removeCallbacks(mUpdateTimeTask);
+         mHandler.postDelayed(mUpdateTimeTask, 700);
+     }
 
-	@SuppressLint("SimpleDateFormat")
+     
+     private void mPause()
+     {
+             super.onPause();
+             mHandler.removeCallbacks(mUpdateTimeTask);
+     }
+     private void mStop()
+     {
+     	super.onStop();
+     	//mTimeLabel.setText(custom_time);
+     	mHandler.removeCallbacks(mUpdateTimeTask);
+     }
+     
 	@Override
 	public void onClick(View v) {
-
-		SimpleDateFormat sdf = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
+		String data_Dt = custom_date;
+		String time_Tm = mTimeLabel.getText().toString();
 		
-		String currentDateandTime = sdf.format(new Date());
-		
-		String str[] = currentDateandTime.split(" ");
-		String data_Dt = str[0];
-		String time_Tm = str[1];
-		
-		String str1[]=str[1].split(":");
+		String str1[]=time_Tm.split(":");
 		String timestampvalue=str1[0];
 		
-		System.out.println(timestampvalue);
-		System.out.println("date is " + data_Dt);
+		System.out.println("Custom Time Stamp "+timestampvalue);
+		System.out.println("custom date  is " + data_Dt);
+		
 		switch (v.getId()) {
 
 		case R.id.image1:
 			System.out.println("Image one  Clicked;");
+			System.out.println("1="+userId+" "+data_Dt+" "+time_Tm+" "+userLocation+" "+timestampvalue+" "+emp_updown );
 			ContentValues values = new ContentValues();
 			values.put(DATA.VEHICLE_ID, 1);
 			values.put(DATA.EMPLOYEE_ID, userId);
@@ -621,14 +708,14 @@ public class VehicleActivity extends Activity implements View.OnClickListener{
         {
         case R.id.menu_viewdb:
         	// Single menu item is selected do something
-        	VehicleActivity.this.startActivity(viewIntentdata);
-            Toast.makeText(VehicleActivity.this, "View DataBase is Selected", Toast.LENGTH_SHORT).show();
+        	CustomVehicleActivity.this.startActivity(viewIntentdata);
+            Toast.makeText(CustomVehicleActivity.this, "View DataBase is Selected", Toast.LENGTH_SHORT).show();
             return true;
             //break;
         case R.id.menu_report:
         	//startActivity(reportIntent);
-        	VehicleActivity.this.startActivity(reportIntent);
-        	Toast.makeText(VehicleActivity.this, "Report is Selected", Toast.LENGTH_SHORT).show();
+        	CustomVehicleActivity.this.startActivity(reportIntent);
+        	Toast.makeText(CustomVehicleActivity.this, "Report is Selected", Toast.LENGTH_SHORT).show();
             return true;
         	//break;
         case R.id.menu_reset:
@@ -657,10 +744,11 @@ public class VehicleActivity extends Activity implements View.OnClickListener{
     		text21.setText(vcount21);
     		text22.setText(vcount22);
     		
-        	Toast.makeText(VehicleActivity.this, "Reset is Selected", Toast.LENGTH_SHORT).show();
+        	Toast.makeText(CustomVehicleActivity.this, "Reset is Selected", Toast.LENGTH_SHORT).show();
             return true;
         case R.id.menu_exit:
-        	Toast.makeText(VehicleActivity.this, "Exit", Toast.LENGTH_SHORT).show();
+        	finish();
+        	Toast.makeText(CustomVehicleActivity.this, "Exit", Toast.LENGTH_SHORT).show();
             return true;
        
         default:

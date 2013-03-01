@@ -19,7 +19,7 @@
                 android:id="@+id/tableLayout1"
                 android:layout_width="wrap_content"
                 android:layout_height="match_parent"
-                android:stretchColumns="0,1" >
+                android:stretchColumns="0,1,2,3" >
 
                 <TableRow
                     android:id="@+id/tableRow1"
@@ -27,27 +27,42 @@
                     android:layout_height="wrap_content" >
 
                     <TextView
-                        style="@style/HeaderRow"
                         android:id="@+id/textView1"
+                        style="@style/HeaderRow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="VEHICLE NAME"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <TextView
-                        style="@style/HeaderRow"
                         android:id="@+id/textView2"
+                        style="@style/HeaderRow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="DATE"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
 
                     <TextView
-                        style="@style/HeaderRow"
                         android:id="@+id/textView3"
+                        style="@style/HeaderRow"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="TIME"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+
+                    <TextView
+                        android:id="@+id/textView4"
+                        style="@style/HeaderRow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="COUNT"
+                        android:textAppearance="?android:attr/textAppearanceMedium" />
+                     <TextView
+                        android:id="@+id/textView4"
+                        style="@style/HeaderRow"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="UP_DOWN"
                         android:textAppearance="?android:attr/textAppearanceMedium" />
                 </TableRow>
             </TableLayout>

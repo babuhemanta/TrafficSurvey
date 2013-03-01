@@ -34,5 +34,7 @@
     <string name="title_activity_vehicle">Vehicle Counter</string>
     <string name="title_activity_dataview">DataBaseView</string>
     <string name="title_activity_report">ReportActivity</string>
+    <string name="title_activity_custom">CustomEntry</string>
+    <string name="action_settings">Settings</string>
 
 </resources>
