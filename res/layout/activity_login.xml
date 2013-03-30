@@ -23,8 +23,7 @@
             android:id="@+id/login_status_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:layout_marginBottom="16dp"
-          
+            android:layout_marginBottom="16dp"          
             android:text="@string/login_progress_signing_in"
             android:textAppearance="?android:attr/textAppearanceMedium" />
     </LinearLayout>
@@ -41,6 +40,13 @@
             android:background="#ff33b5e5"
             android:orientation="vertical" >
 
+            <TextView
+                android:id="@+id/textView1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/login_user" />
+
             <EditText
                 android:id="@+id/user"
                 android:layout_width="match_parent"
@@ -51,6 +57,13 @@
                 android:inputType="text"
                 android:maxLines="1"
                 android:singleLine="true" />
+
+            <TextView
+                android:id="@+id/textView2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textAppearance="?android:attr/textAppearanceMedium"
+                android:text="@string/login_password" />
 
             <EditText
                 android:id="@+id/password"
@@ -67,13 +80,14 @@
 
             <Button
                 android:id="@+id/sign_in_button"
-                android:layout_width="wrap_content"
+                android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:layout_marginTop="16dp"
-                android:background="#FFFFFF"
+                android:background="#808080"
                 android:paddingLeft="32dp"
                 android:paddingRight="32dp"
+                android:textColor="#FFFFFF"
                 android:text="@string/action_sign_in_register" />
         </LinearLayout>
     </ScrollView>

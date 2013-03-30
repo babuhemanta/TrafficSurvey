@@ -7,8 +7,10 @@
     <string name="title_activity_login">Sign in</string>
 
     <!-- Strings related to login -->
-    <string name="prompt_user">Enter Your Username</string>
-    <string name="prompt_password">Enter Your Password</string>
+    <string name="login_user">Enter UserName</string>
+    <string name="login_password">Enter Password</string>
+    <string name="prompt_user">eg. traffic</string>
+    <string name="prompt_password">eg. survey</string>
     <string name="action_sign_in_register">Sign in</string>
     <string name="action_sign_in_short">Sign in</string>
     <string name="menu_forgot_password">Recover lost password</string>
@@ -20,6 +22,8 @@
     <string name="title_activity_employee">EmployeeActivity</string>
     <string name="Employee_Name">Enter Name</string>
     <string name="Employee_Location">Enter Location</string>
+    <string name="EmployeeHint_Name">eg. Anil Nayak</string>
+    <string name="EmployeeHint_Location">eg. Bhubaneswar</string>
     <string name="Next">Next</string>
 
     <string-array name="typeformat">

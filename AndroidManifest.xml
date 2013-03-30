@@ -17,6 +17,8 @@
         android:theme="@style/AppTheme" >
         <activity
             android:name="com.shiftu.trafficsurvey.SplashActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/app_name" >
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -26,31 +28,45 @@
         </activity>
         <activity
             android:name="com.shiftu.trafficsurvey.LoginActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_login"
             android:windowSoftInputMode="adjustResize|stateVisible" >
         </activity>
         <activity
             android:name="com.shiftu.trafficsurvey.EmployeeActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_employee" >
         </activity>
         <activity
             android:name="com.shiftu.trafficsurvey.VehicleActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_vehicle" >
         </activity>
         <activity
             android:name="com.shiftu.trafficsurvey.CustomVehicleActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_vehicle" >
         </activity>
         <activity
             android:name="com.shiftu.trafficsurvey.DataviewActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_dataview" >
         </activity>
         <activity
             android:name="com.shiftu.trafficsurvey.ReportActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_report" >
         </activity>
         <activity
             android:name="com.shiftu.trafficsurvey.CustomActivity"
+            android:screenOrientation="landscape"
+            android:configChanges="orientation|keyboardHidden"
             android:label="@string/title_activity_custom" >
         </activity>
     </application>
