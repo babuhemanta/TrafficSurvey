@@ -18,7 +18,7 @@ import android.widget.TimePicker;
 public class CustomActivity extends Activity {
 
 	//DateFormat fmtDateAndTime = DateFormat.getDateTimeInstance();
-	EditText edit1,  edit2;
+	EditText edit1, edit2;
 	Calendar myCalendar = Calendar.getInstance();
 	Button button;
 	public static String emp_name,emp_location, emp_updown;

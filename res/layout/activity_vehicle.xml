@@ -25,6 +25,7 @@
                 android:src="@drawable/frame1_1" />
               <TextView
                 android:id="@+id/text1"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
 
@@ -48,6 +49,7 @@
 
             <TextView
                 android:id="@+id/text2"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -69,6 +71,7 @@
 
             <TextView
                 android:id="@+id/text3"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -90,6 +93,7 @@
 
             <TextView
                 android:id="@+id/text4"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -111,6 +115,7 @@
 
             <TextView
                 android:id="@+id/text5"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -132,6 +137,7 @@
 
             <TextView
                 android:id="@+id/text6"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -153,6 +159,7 @@
 
             <TextView
                 android:id="@+id/text7"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -174,6 +181,7 @@
 
             <TextView
                 android:id="@+id/text8"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -195,6 +203,7 @@
 
             <ImageView
                 android:id="@+id/image9"
+                
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:clickable="true"
@@ -202,6 +211,7 @@
 
             <TextView
                 android:id="@+id/text9"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -223,6 +233,7 @@
 
             <TextView
                 android:id="@+id/text10"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -244,6 +255,7 @@
 
             <TextView
                 android:id="@+id/text11"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -265,6 +277,7 @@
 
             <TextView
                 android:id="@+id/text12"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -286,6 +299,7 @@
 
             <TextView
                 android:id="@+id/text13"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -307,6 +321,7 @@
 
             <TextView
                 android:id="@+id/text14"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -328,6 +343,7 @@
 
             <TextView
                 android:id="@+id/text15"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -349,6 +365,7 @@
 
             <TextView
                 android:id="@+id/text16"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -377,6 +394,7 @@
 
             <TextView
                 android:id="@+id/text17"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -398,6 +416,7 @@
 
             <TextView
                 android:id="@+id/text18"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -419,6 +438,7 @@
 
             <TextView
                 android:id="@+id/text19"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -440,6 +460,7 @@
 
             <TextView
                 android:id="@+id/text20"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -461,6 +482,7 @@
 
             <TextView
                 android:id="@+id/text21"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -482,6 +504,7 @@
 
             <TextView
                 android:id="@+id/text22"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -502,6 +525,7 @@
 
             <TextView
                 android:id="@+id/text23"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
@@ -522,6 +546,7 @@
 
             <TextView
                 android:id="@+id/text24"
+                android:textStyle="bold"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content" />
         </LinearLayout>
