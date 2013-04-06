@@ -18,6 +18,7 @@ import android.widget.TimePicker;
 public class CustomActivity extends Activity {
 
 	//DateFormat fmtDateAndTime = DateFormat.getDateTimeInstance();
+	/* Tutorial For update receive*/
 	EditText edit1, edit2;
 	Calendar myCalendar = Calendar.getInstance();
 	Button button;
